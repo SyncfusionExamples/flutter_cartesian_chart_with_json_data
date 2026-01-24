@@ -35,12 +35,12 @@ class JsonDataState extends State<JsonData> {
 
   final List<_ChartData> _chartData = <_ChartData>[];
 
-  Future<String> _loadSalesDataAsset() async {
+  Future<String> _loadChartDataAsset() async {
     return await rootBundle.loadString('assets/data.json');
   }
 
-  Future _loadSalesData() async {
-    final String jsonString = await _loadSalesDataAsset();
+  Future _loadChartData() async {
+    final String jsonString = await _loadChartDataAsset();
     final dynamic jsonResponse = json.decode(jsonString);
     setState(() {
       for (final Map<dynamic, dynamic> i in jsonResponse) {
@@ -52,7 +52,7 @@ class JsonDataState extends State<JsonData> {
   @override
   void initState() {
     super.initState();
-    _loadSalesData();
+    _loadChartData();
   }
 
   @override
@@ -84,17 +84,17 @@ class JsonDataState extends State<JsonData> {
         axisLine: AxisLine(width: 0),
         majorTickLines: MajorTickLines(color: Colors.transparent),
       ),
-      series: _getDefaultFastLineSeries(),
+      series: _buildFastLineSeries(),
     );
   }
 
   /// The method returns line series to chart.
-  List<FastLineSeries<_ChartData, DateTime>> _getDefaultFastLineSeries() {
+  List<FastLineSeries<_ChartData, DateTime>> _buildFastLineSeries() {
     return <FastLineSeries<_ChartData, DateTime>>[
       FastLineSeries<_ChartData, DateTime>(
         dataSource: _chartData,
         xValueMapper: (_ChartData data, int index) => data.x,
-        yValueMapper: (_ChartData data, int index) => data.y1,
+        yValueMapper: (_ChartData data, int index) => data.y,
       ),
     ];
   }
@@ -107,17 +107,15 @@ class JsonDataState extends State<JsonData> {
 }
 
 class _ChartData {
-  _ChartData(this.x, this.y1, this.y2);
+  _ChartData(this.x, this.y);
 
   DateTime x;
-  num y1;
-  num y2;
+  num y;
 
   factory _ChartData.fromJson(Map<dynamic, dynamic> parsedJson) {
     return _ChartData(
       DateTime.parse(parsedJson['x']),
-      parsedJson['y1'],
-      parsedJson['y2'],
+      parsedJson['y'],
     );
   }
 }
